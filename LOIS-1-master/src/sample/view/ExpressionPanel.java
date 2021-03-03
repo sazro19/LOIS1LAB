@@ -10,7 +10,6 @@ public class ExpressionPanel {
 
     private ScrollPane expRowScrollPane;
 
-
     public ExpressionPanel() {
         expressionRowTextField = new TextField();
         configureExpressionRowTextField();

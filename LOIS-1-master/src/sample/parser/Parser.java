@@ -1,7 +1,6 @@
 package sample.parser;
 
-import sample.parser.exception.BracketsNumberException;
-import sample.parser.exception.CharNotCorrectException;
+import sample.parser.exception.BracketsException;
 import sample.parser.validation.Validator;
 
 public class Parser {
@@ -12,46 +11,53 @@ public class Parser {
     private static final char BACKSLASH = '\\';
     private static final char NOT = '!';
     private String expression;
-    private boolean isKNF = true;
+    private boolean isCNF = true;
 
 
     public Parser(String expression) {
         this.expression = expression;
     }
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
+//        try {
+//            System.out.println(new Parser("S").isCNF());
+//        } catch (BracketsNumberException e) {
+//            e.printStackTrace();
+//        } catch (CharNotCorrectException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    public boolean isCNF() {
+
         try {
-            System.out.println(new Parser("S").isKNF());
-        } catch (BracketsNumberException e) {
-            e.printStackTrace();
-        } catch (CharNotCorrectException e) {
-            e.printStackTrace();
-        }
-    }
+            if (!Validator.isBracketsCountCorrect(expression)) {
+                isCNF = false;
+                throw new BracketsException("Check Brackets!");
+            }
+            if (!Validator.isLitCorrect(expression)) {
+                isCNF = false;
+            }
+            if (!Validator.isSymbolsCorrect(expression)) {
+                isCNF = false;
+            }
 
-    public boolean isKNF() throws BracketsNumberException, CharNotCorrectException {
+            if (expression.contains("->") || expression.contains("~")) {
+                isCNF = false;
+            }
 
-        if (!Validator.isBracketsCountCorrect(expression)) {
-            isKNF = false;
-            throw new BracketsNumberException("не совпадает количество открывающих и закрывающих скобок");
+            if (isCNF) {
+                replaceInversion();
+                if (expression.contains("!") || !replaceDis()) {
+                    isCNF = false;
+                } else if (!expression.contains("\\/")) {
+                    isCNF = replaceCon();
+                } else isCNF = false;
+            }
+        } catch (BracketsException e) {
+            System.out.println(e.getMessage());
         }
-        if (!Validator.isSymbolsCorrect(expression)) {
-            isKNF = false;
-        }
-
-        if (expression.contains("->") || expression.contains("~")) {
-            isKNF = false;
-        }
-
-        if (isKNF) {
-            replaceInversion();
-            if (expression.contains("!") || !replaceDis()) {
-                isKNF = false;
-            } else if (!expression.contains("\\/")) {
-                isKNF = replaceCon();
-            } else isKNF = false;
-        }
-        return isKNF;
+        return isCNF;
     }
 
     private void replaceInversion() {
@@ -84,7 +90,6 @@ public class Parser {
                 openedBracket = i;
             } else if (character.compareTo(BACKSLASH) == 0 && expression.charAt(i + 1) == CLASH &&
                     expression.charAt(i + 2) != OPENED) {
-
                 isCorrectDis = true;
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 String simpleDis = expression.substring(openedBracket, closedBracket);
@@ -100,11 +105,11 @@ public class Parser {
         return isCorrectDis;
     }
 
-    private boolean isBinary(String substring, char operat) {
+    private boolean isBinary(String substring, char op) {
         boolean isBin = true;
         for (int i = 1; i < substring.length() - 1; i++) {
             Character character = substring.charAt(i);
-            if (character.compareTo(operat) == 0 && substring.indexOf(operat, i + 1) > -1) {
+            if (character.compareTo(op) == 0 && substring.indexOf(op, i + 1) > -1) {
                 isBin = false;
                 break;
             }
@@ -116,7 +121,7 @@ public class Parser {
 
         int openedBracket = 0;
         int closedBracket;
-        boolean isKNF = true;
+        boolean isCNF = true;
 
         for (int i = 0; i < expression.length(); i++) {
             Character character = expression.charAt(i);
@@ -124,18 +129,18 @@ public class Parser {
                 openedBracket = i;
             } else if (character.compareTo(CLASH) == 0 && expression.charAt(i + 1) == BACKSLASH && expression.charAt(i + 2) != OPENED) {
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
-                String simpleDis = expression.substring(openedBracket, closedBracket);
-                if (isBinary(simpleDis, CLASH)) {
-                    expression = expression.replace(simpleDis, "Co");
+                String simpleCon = expression.substring(openedBracket, closedBracket);
+                if (isBinary(simpleCon, CLASH)) {
+                    expression = expression.replace(simpleCon, "Co");
                     i = -1;
                 } else {
-                    isKNF = false;
+                    isCNF = false;
                     break;
                 }
 
             }
         }
-        if (isKNF)
+        if (isCNF)
             return expression.contains("Co");
         else return false;
     }

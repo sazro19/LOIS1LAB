@@ -2,15 +2,12 @@ package sample.view;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import sample.parser.Parser;
-import sample.parser.exception.BracketsNumberException;
-import sample.parser.exception.CharNotCorrectException;
 
 
 public class OperButtonPanel {
@@ -22,20 +19,17 @@ public class OperButtonPanel {
 
     private EventHandler<ActionEvent> findEventHandler = e -> {
         try {
-            if (!new Parser(expRowTextField.getText()).isKNF()) {
+            if (!new Parser(expRowTextField.getText()).isCNF()) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText("It is not KNF");
+                alert.setContentText("It is not CNF");
                 alert.showAndWait();
             } else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setContentText("It is KNF");
+                alert.setContentText("It is CNF");
                 alert.showAndWait();
             }
-        } catch (BracketsNumberException | CharNotCorrectException bracketNumberException) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText(bracketNumberException.getMessage());
-            alert.showAndWait();
-            bracketNumberException.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     };
     public OperButtonPanel(ExpressionPanel expressionRowPanel) {

@@ -19,18 +19,22 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Form form = new Form();
-        VBox pane = new VBox();
-        Label label = new Label("Checker for KNF");
-        label.setStyle("-fx-text-fill: black;" +
-                "-fx-font-weight: bold");
-        label.setFont(new Font("Lucida Sans Unicode", 50));
-        pane.getChildren().addAll(label, form.getGridPane());
-        pane.setStyle("-fx-background-color: green;");
-        Scene scene = new Scene(pane, 1366, 700);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("KNF Check");
-        primaryStage.show();
+        System.out.println((int)'A' + " " + (int)'Z');
+        Loader loader = new Loader();
+        loader.startCheck();
+
+//        Form form = new Form();
+//        VBox pane = new VBox();
+//        Label label = new Label("Checker for KNF");
+//        label.setStyle("-fx-text-fill: black;" +
+//                "-fx-font-weight: bold");
+//        label.setFont(new Font("Lucida Sans Unicode", 50));
+//        pane.getChildren().addAll(label, form.getGridPane());
+//        pane.setStyle("-fx-background-color: green;");
+//        Scene scene = new Scene(pane, 1366, 700);
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle("KNF Check");
+//        primaryStage.show();
     }
 
 
