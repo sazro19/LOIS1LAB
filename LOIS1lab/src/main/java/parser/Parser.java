@@ -1,7 +1,7 @@
-package sample.parser;
+package parser;
 
-import sample.parser.exception.BracketsException;
-import sample.parser.validation.Validator;
+import parser.componentsOfExeptions.BracketsException;
+import parser.componentsOfValidation.Validator;
 
 public class Parser {
 
@@ -12,33 +12,34 @@ public class Parser {
     private static final char NOT = '!';
     private String expression;
     private boolean isCNF = true;
+    private int count = 0;
 
 
     public Parser(String expression) {
         this.expression = expression;
     }
 
-//    public static void main(String[] args) {
-//        try {
-//            System.out.println(new Parser("S").isCNF());
-//        } catch (BracketsNumberException e) {
-//            e.printStackTrace();
-//        } catch (CharNotCorrectException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private boolean isAtom() {
+        if (expression.length() <= 2) {
+            return expression.charAt(0) >= (int) 'A' && expression.charAt(0) <= (int) 'Z';
+        }
+        return false;
+    }
 
     public boolean isCNF() {
 
         try {
             if (!Validator.isBracketsCountCorrect(expression)) {
                 isCNF = false;
-                throw new BracketsException("Check Brackets!");
+                throw new BracketsException("Invalid!");
             }
             if (!Validator.isLitCorrect(expression)) {
                 isCNF = false;
             }
             if (!Validator.isSymbolsCorrect(expression)) {
+                isCNF = false;
+            }
+            if (!Validator.isOpCorrect(expression)) {
                 isCNF = false;
             }
 
@@ -48,6 +49,9 @@ public class Parser {
 
             if (isCNF) {
                 replaceInversion();
+                if (count == 1) {
+                    return true;
+                }
                 if (expression.contains("!") || !replaceDis()) {
                     isCNF = false;
                 } else if (!expression.contains("\\/")) {
@@ -61,8 +65,8 @@ public class Parser {
     }
 
     private void replaceInversion() {
-        int openedBracket = 0;
-        int closedBracket = 0;
+        int openedBracket;
+        int closedBracket;
         String subInversion;
         for (int i = 0; i < expression.length(); i++) {
             Character character = expression.charAt(i);
@@ -71,7 +75,8 @@ public class Parser {
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 subInversion = expression.substring(openedBracket, closedBracket);
                 if (Validator.isBracketsCountCorrect(subInversion)) {
-                    expression = expression.replace(subInversion, "In");
+                    expression = expression.replace(subInversion, "Inv");
+                    count++;
                     i = -1;
                 }
             }
@@ -94,7 +99,7 @@ public class Parser {
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 String simpleDis = expression.substring(openedBracket, closedBracket);
                 if (isBinary(simpleDis, BACKSLASH)) {
-                    expression = expression.replace(simpleDis, "Dn");
+                    expression = expression.replace(simpleDis, "Dis");
                     i = -1;
                 } else {
                     isCorrectDis = false;
@@ -118,6 +123,9 @@ public class Parser {
     }
 
     private boolean replaceCon() {
+        if (isAtom()) {
+            return true;
+        }
 
         int openedBracket = 0;
         int closedBracket;
@@ -131,7 +139,7 @@ public class Parser {
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 String simpleCon = expression.substring(openedBracket, closedBracket);
                 if (isBinary(simpleCon, CLASH)) {
-                    expression = expression.replace(simpleCon, "Co");
+                    expression = expression.replace(simpleCon, "Con");
                     i = -1;
                 } else {
                     isCNF = false;
@@ -141,7 +149,7 @@ public class Parser {
             }
         }
         if (isCNF)
-            return expression.contains("Co");
+            return expression.contains("Con");
         else return false;
     }
 
