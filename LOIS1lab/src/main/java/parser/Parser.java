@@ -1,6 +1,6 @@
 package parser;
 
-import parser.componentsOfExeptions.BracketsException;
+import parser.componentsOfValidation.BracketValidator;
 import parser.componentsOfValidation.Validator;
 
 public class Parser {
@@ -12,8 +12,8 @@ public class Parser {
     private static final char NOT = '!';
     private String expression;
     private boolean isCNF = true;
-    private int count = 0;
-
+    private long inversionCount = 0;
+    private long disCount = 0;
 
     public Parser(String expression) {
         this.expression = expression;
@@ -27,40 +27,21 @@ public class Parser {
     }
 
     public boolean isCNF() {
-
-        try {
-            if (!Validator.isBracketsCountCorrect(expression)) {
-                isCNF = false;
-                throw new BracketsException("Invalid!");
-            }
-            if (!Validator.isLitCorrect(expression)) {
-                isCNF = false;
-            }
-            if (!Validator.isSymbolsCorrect(expression)) {
-                isCNF = false;
-            }
-            if (!Validator.isOpCorrect(expression)) {
-                isCNF = false;
-            }
-
-            if (expression.contains("->") || expression.contains("~")) {
-                isCNF = false;
-            }
-
-            if (isCNF) {
-                replaceInversion();
-                if (count == 1) {
-                    return true;
-                }
-                if (expression.contains("!") || !replaceDis()) {
-                    isCNF = false;
-                } else if (!expression.contains("\\/")) {
-                    isCNF = replaceCon();
-                } else isCNF = false;
-            }
-        } catch (BracketsException e) {
-            System.out.println(e.getMessage());
+        if (!Validator.startValidation(expression)) {
+            return false;
         }
+
+        replaceInversion();
+        if (expression.equals("Inv") && inversionCount == 1) {
+            return true;
+        }
+        if (expression.contains("!") || !replaceDis()) {
+            isCNF = false;
+        } else if (expression.equals("Dis") && disCount == 1) {
+            return true;
+        } else if (!expression.contains("\\/")) {
+            isCNF = replaceCon();
+        } else isCNF = false;
         return isCNF;
     }
 
@@ -74,9 +55,9 @@ public class Parser {
                 openedBracket = i - 1;
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 subInversion = expression.substring(openedBracket, closedBracket);
-                if (Validator.isBracketsCountCorrect(subInversion)) {
+                if (BracketValidator.isBracketsCountCorrect(subInversion)) {
                     expression = expression.replace(subInversion, "Inv");
-                    count++;
+                    inversionCount++;
                     i = -1;
                 }
             }
@@ -100,6 +81,7 @@ public class Parser {
                 String simpleDis = expression.substring(openedBracket, closedBracket);
                 if (isBinary(simpleDis, BACKSLASH)) {
                     expression = expression.replace(simpleDis, "Dis");
+                    disCount++;
                     i = -1;
                 } else {
                     isCorrectDis = false;
