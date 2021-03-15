@@ -8,6 +8,12 @@ public class OperatorValidator {
             if (expression.charAt(i) == '/' || expression.charAt(i) == '\\' || expression.charAt(i) == '!') {
                 if (expression.charAt(i) == expression.charAt(i + 1)) {
                     isCorrect = false;
+                } else if (expression.charAt(i + 1) == ')') {
+                    isCorrect = false;
+                }
+            } else if (expression.charAt(i) == '(') {
+                if (expression.charAt(i + 1) == '/' || expression.charAt(i + 1) == '\\') {
+                    isCorrect = false;
                 }
             }
         }
