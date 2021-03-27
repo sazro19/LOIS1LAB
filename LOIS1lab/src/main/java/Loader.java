@@ -15,7 +15,7 @@ public class Loader {
                 System.exit(0);
             } else {
                 Parser parser = new Parser(expression);
-                if (parser.isCNF()) {
+                if (parser.transformFormula()) {
                     System.out.println("It is CNF");
                 } else {
                     System.out.println("It is not CNF");

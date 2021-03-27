@@ -26,26 +26,26 @@ public class Parser {
         return false;
     }
 
-    public boolean isCNF() {
+    public boolean transformFormula() {
         if (!Validator.startValidation(expression)) {
             return false;
         }
 
-        replaceInversion();
+        transformInversion();
         if (expression.equals("Inv") && inversionCount == 1) {
             return true;
         }
-        if (expression.contains("!") || !replaceDis()) {
+        if (expression.contains("!") || !transformDis()) {
             isCNF = false;
-        } else if (expression.equals("Dis") && disCount == 1) {
+        } else if (expression.equals("Dis")) {
             return true;
         } else if (!expression.contains("\\/")) {
-            isCNF = replaceCon();
+            isCNF = transformCon();
         } else isCNF = false;
         return isCNF;
     }
 
-    private void replaceInversion() {
+    private void transformInversion() {
         int openedBracket;
         int closedBracket;
         String subInversion;
@@ -64,21 +64,21 @@ public class Parser {
         }
     }
 
-    private boolean replaceDis() {
-        int openedBracket = 0;
-        int closedBracket;
+    private boolean transformDis() {
+        int opBracketIndex = 0;
+        int clBracketIndex;
         boolean isCorrectDis = true;
 
         for (int i = 0; i < expression.length(); i++) {
             Character character = expression.charAt(i);
 
             if (character.compareTo(OPENED) == 0) {
-                openedBracket = i;
+                opBracketIndex = i;
             } else if (character.compareTo(BACKSLASH) == 0 && expression.charAt(i + 1) == CLASH &&
                     expression.charAt(i + 2) != OPENED) {
                 isCorrectDis = true;
-                closedBracket = expression.indexOf(CLOSED, i) + 1;
-                String simpleDis = expression.substring(openedBracket, closedBracket);
+                clBracketIndex = expression.indexOf(CLOSED, i) + 1;
+                String simpleDis = expression.substring(opBracketIndex, clBracketIndex);
                 if (isBinary(simpleDis, BACKSLASH)) {
                     expression = expression.replace(simpleDis, "Dis");
                     disCount++;
@@ -104,7 +104,7 @@ public class Parser {
         return isBin;
     }
 
-    private boolean replaceCon() {
+    private boolean transformCon() {
         if (isAtom()) {
             return true;
         }

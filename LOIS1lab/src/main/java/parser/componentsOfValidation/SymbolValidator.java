@@ -10,6 +10,11 @@ public class SymbolValidator {
 
     public static boolean isSymbolsCorrect(String expression) {
         boolean isCorrect = true;
+        for (int i = 0; i < expression.length(); i++) {
+            if (!(OPERATORS + WORDS).contains(Character.toString(expression.charAt(i)))) {
+                return false;
+            }
+        }
         if (expression.length() <= 5) {
             if (expression.length() >= 4) {
                 if (expression.charAt(3) >= (int) '0' && expression.charAt(3) <= '9') {
