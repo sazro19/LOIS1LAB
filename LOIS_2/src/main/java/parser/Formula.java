@@ -91,12 +91,13 @@ public class Formula {
         builder.append("(".repeat(Math.max(0, truthTable.countDis() - 1)));
         int count = 0;
         for (int j = 0; j < truthTable.getCountRows(); j++) {
-            if (truthTable.getValueRow(j) == 1) {
+            if (truthTable.getValueRow(j) == 0) {
                 builder.append(createAtom(ELEMENTS.size(), truthTable.getTable()[j]));
                 if (count != 0) {
                     builder.append(")");
                 }
-                String MAIN_SIGN = "\\/";
+               // String MAIN_SIGN = "\\/";
+                String MAIN_SIGN = "/\\";
                 builder.append(MAIN_SIGN);
                 count++;
             }
@@ -110,11 +111,12 @@ public class Formula {
         atom.append("(".repeat(Math.max(0, countElements - 1)));
         int count = 0;
         for (int i = 0; i < countElements; i++) {
-            atom.append((rowTruthTable[i] == 1) ? Config.SYMBOLS.get(i) : ("(!" + Config.SYMBOLS.get(i) + ")"));
+            atom.append((rowTruthTable[i] == 0) ? Config.SYMBOLS.get(i) : ("(!" + Config.SYMBOLS.get(i) + ")"));
             if (count != 0) {
                 atom.append(")");
             }
-            String SIGN = "/\\";
+          //  String SIGN = "/\\";
+            String SIGN = "\\/";
             atom.append(SIGN);
             count++;
         }
