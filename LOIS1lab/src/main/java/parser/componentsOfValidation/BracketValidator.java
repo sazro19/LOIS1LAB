@@ -2,7 +2,7 @@ package parser.componentsOfValidation;
 
 public class BracketValidator {
 
-    public static boolean isBracketsCountCorrect(String expression) {
+    public static boolean isBracketsNumberCorrect(String expression) {
         if (expression.charAt(0) != '(' && expression.length() > 2) {
             return false;
         }

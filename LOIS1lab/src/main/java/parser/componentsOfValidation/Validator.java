@@ -15,7 +15,7 @@ public class Validator {
             return false;
         }
         try {
-            if (!BracketValidator.isBracketsCountCorrect(expression)) {
+            if (!BracketValidator.isBracketsNumberCorrect(expression)) {
                 throw new BracketsException("Brackets number is invalid!");
             }
         } catch (Exception e) {

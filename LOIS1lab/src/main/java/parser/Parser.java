@@ -7,7 +7,7 @@ public class Parser {
 
     private static final char OPENED = '(';
     private static final char CLOSED = ')';
-    private static final char CLASH = '/';
+    private static final char SLASH = '/';
     private static final char BACKSLASH = '\\';
     private static final char NOT = '!';
     private String expression;
@@ -55,7 +55,7 @@ public class Parser {
                 openedBracket = i - 1;
                 closedBracket = expression.indexOf(CLOSED, i) + 1;
                 subInversion = expression.substring(openedBracket, closedBracket);
-                if (BracketValidator.isBracketsCountCorrect(subInversion)) {
+                if (BracketValidator.isBracketsNumberCorrect(subInversion)) {
                     expression = expression.replace(subInversion, "Inv");
                     inversionCount++;
                     i = -1;
@@ -74,7 +74,7 @@ public class Parser {
 
             if (character.compareTo(OPENED) == 0) {
                 opBracketIndex = i;
-            } else if (character.compareTo(BACKSLASH) == 0 && expression.charAt(i + 1) == CLASH &&
+            } else if (character.compareTo(BACKSLASH) == 0 && expression.charAt(i + 1) == SLASH &&
                     expression.charAt(i + 2) != OPENED) {
                 isCorrectDis = true;
                 clBracketIndex = expression.indexOf(CLOSED, i) + 1;
@@ -93,15 +93,15 @@ public class Parser {
     }
 
     private boolean isBinary(String substring, char op) {
-        boolean isBin = true;
+        boolean isBinary = true;
         for (int i = 1; i < substring.length() - 1; i++) {
             Character character = substring.charAt(i);
             if (character.compareTo(op) == 0 && substring.indexOf(op, i + 1) > -1) {
-                isBin = false;
+                isBinary = false;
                 break;
             }
         }
-        return isBin;
+        return isBinary;
     }
 
     private boolean transformCon() {
@@ -109,28 +109,29 @@ public class Parser {
             return true;
         }
 
-        int openedBracket = 0;
-        int closedBracket;
-        boolean isCNF = true;
+        int opBracketIndex = 0;
+        int clBracketIndex;
+        boolean isCorrectCon = true;
 
         for (int i = 0; i < expression.length(); i++) {
             Character character = expression.charAt(i);
             if (character.compareTo(OPENED) == 0) {
-                openedBracket = i;
-            } else if (character.compareTo(CLASH) == 0 && expression.charAt(i + 1) == BACKSLASH && expression.charAt(i + 2) != OPENED) {
-                closedBracket = expression.indexOf(CLOSED, i) + 1;
-                String simpleCon = expression.substring(openedBracket, closedBracket);
-                if (isBinary(simpleCon, CLASH)) {
+                opBracketIndex = i;
+            } else if (character.compareTo(SLASH) == 0 && expression.charAt(i + 1) == BACKSLASH &&
+                    expression.charAt(i + 2) != OPENED) {
+                clBracketIndex = expression.indexOf(CLOSED, i) + 1;
+                String simpleCon = expression.substring(opBracketIndex, clBracketIndex);
+                if (isBinary(simpleCon, SLASH)) {
                     expression = expression.replace(simpleCon, "Con");
                     i = -1;
                 } else {
-                    isCNF = false;
+                    isCorrectCon = false;
                     break;
                 }
 
             }
         }
-        if (isCNF)
+        if (isCorrectCon)
             return expression.contains("Con");
         else return false;
     }

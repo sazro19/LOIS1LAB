@@ -1,12 +1,10 @@
-/////////////////////////////////////////////////////////////////////////////////////////
 // Лабораторная работа №2 по дисциплине ЛОИС
-// Вариант 9: Построить СДНФ для заданной формулы
-// Выполнена студентом грруппы 821701 БГУИР Клевцевич Александр Владимирович
-// Класс предназначен для исключений
+// Вариант 8: Построить СКНФ для заданной формулы
+// Выполнена студентом грруппы 821701 БГУИР Залесский Александр Андреевич
 
 package parser;
 
-public class SKNFException extends Exception {
+public class FormulaException extends Exception {
     private String message;
     private final int number;
 
@@ -14,7 +12,7 @@ public class SKNFException extends Exception {
         return message;
     }
 
-    public SKNFException(int number) {
+    public FormulaException(int number) {
         this.number = number;
         switch (number) {
             case 1: {
