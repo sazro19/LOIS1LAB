@@ -5,6 +5,7 @@
 package parser;
 
 import config.Configuration;
+import parser.Exception.FormulaException;
 
 import java.util.*;
 
@@ -33,12 +34,12 @@ public class FormulaParser {
 
     private void checkSymbols() throws FormulaException {
         if (EXPRESSION.length() == 1) {
-            if (!Configuration.LITERALS.contains(EXPRESSION)) {
+            if (!Configuration.ALL_LITERALS.contains(EXPRESSION)) {
                 throw new FormulaException(6);
             }
         }
         for (int i = 0; i < EXPRESSION.length(); i++) {
-            if (!(Configuration.LITERALS.contains("" + EXPRESSION.charAt(i)) || Configuration.OPERATORS.contains("" + EXPRESSION.charAt(i)))) {
+            if (!(Configuration.ALL_LITERALS.contains("" + EXPRESSION.charAt(i)) || Configuration.OPERATORS.contains("" + EXPRESSION.charAt(i)))) {
                 String op = searchOp(EXPRESSION, i);
                 if (!Configuration.OPERATORS.contains(op)) {
                     throw new FormulaException(6);
@@ -51,7 +52,7 @@ public class FormulaParser {
         }
     }
 
-    private String searchOp(String expression, int pointer) {
+    static String searchOp(String expression, int pointer) {
         if (expression.charAt(pointer) == '!' || expression.charAt(pointer) == '~')
             return expression.charAt(pointer) + "";
         return "" + expression.charAt(pointer) + expression.charAt(pointer + 1);

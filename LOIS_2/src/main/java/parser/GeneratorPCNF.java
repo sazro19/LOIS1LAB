@@ -57,7 +57,7 @@ public class GeneratorPCNF {
         atom.append("(".repeat(Math.max(0, countElements - 1)));
         int count = 0;
         for (int i = 0; i < countElements; i++) {
-            atom.append((row[i] == 0) ? Configuration.LITERALS.get(i) : ("(!" + Configuration.LITERALS.get(i) + ")"));
+            atom.append((row[i] == 0) ? Configuration.ALL_LITERALS.get(i) : ("(!" + Configuration.ALL_LITERALS.get(i) + ")"));
             if (count != 0) {
                 atom.append(")");
             }

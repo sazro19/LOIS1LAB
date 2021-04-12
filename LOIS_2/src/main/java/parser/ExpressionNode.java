@@ -5,6 +5,7 @@
 package parser;
 
 import config.Configuration;
+import parser.Exception.FormulaException;
 
 public class ExpressionNode {
     private final String expression;
@@ -44,13 +45,13 @@ public class ExpressionNode {
                 }
                 rightNode = null;
                 leftNode = new ExpressionNode(copy(expression, 1, expression.length()), root);
-                operation = searchOp(expression, pointerOp);
+                operation = FormulaParser.searchOp(expression, pointerOp);
                 return;
             }
             if (pointerOp == -1) {
                 throw new FormulaException(3);
             }
-            operation = searchOp(expression, pointerOp);
+            operation = FormulaParser.searchOp(expression, pointerOp);
             String leftExpression = copy(expression, 0, pointerOp);
             if (operation.length() == 2) {
                 pointerOp += 1;
@@ -75,7 +76,7 @@ public class ExpressionNode {
         int check = 0;
         for (int i = 0; i < expression.length(); i++) {
             if ((expression.charAt(i) != '(' && expression.charAt(i) != ')') && check == 0) {
-                String op = searchOp(expression, i);
+                String op = FormulaParser.searchOp(expression, i);
                 if (Configuration.OPERATORS.contains(op)) {
                     return i;
                 }
@@ -87,12 +88,6 @@ public class ExpressionNode {
             }
         }
         return -1;
-    }
-
-    private String searchOp(String expression, int pointer) {
-        if (expression.charAt(pointer) == '!' || expression.charAt(pointer) == '~')
-            return expression.charAt(pointer) + "";
-        return "" + expression.charAt(pointer) + expression.charAt(pointer + 1);
     }
 
     public String getExpression() {

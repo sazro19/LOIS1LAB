@@ -2,7 +2,7 @@
 // Вариант 8: Построить СКНФ для заданной формулы
 // Выполнена студентом грруппы 821701 БГУИР Залесский Александр Андреевич
 
-package parser;
+package parser.Exception;
 
 public class FormulaException extends Exception {
     private String message;

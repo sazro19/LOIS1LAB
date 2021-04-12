@@ -26,9 +26,9 @@ public class Main {
         System.out.println(expression);
         System.out.println();
         FormulaService formula = new FormulaService(expression);
-        if (formula.isResult()) {
+        if (formula.getResult()) {
             System.out.println(formula.getResultParser() + "\n");
-            formula.output();
+            formula.out();
             System.out.println("\n");
         }
     }
