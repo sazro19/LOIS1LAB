@@ -12,15 +12,15 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         String expression = "";
-        StringBuilder builder = new StringBuilder(expression);
+        StringBuilder tempFormula = new StringBuilder(expression);
         try (FileInputStream fin = new FileInputStream(Configuration.IN_PATH)) {
             while (fin.available() > 0) {
                 int oneByte = fin.read();
-                builder.append(((char) oneByte));
+                tempFormula.append(((char) oneByte));
             }
-            expression = builder.toString();
+            expression = tempFormula.toString();
         } catch (FileNotFoundException ex) {
-            System.out.println("File not find!!!");
+            System.out.println("File not found");
         }
 
         System.out.println(expression);

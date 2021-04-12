@@ -39,11 +39,11 @@ public class FormulaParser {
         }
         for (int i = 0; i < EXPRESSION.length(); i++) {
             if (!(Configuration.LITERALS.contains("" + EXPRESSION.charAt(i)) || Configuration.OPERATORS.contains("" + EXPRESSION.charAt(i)))) {
-                String sign = searchSign(EXPRESSION, i);
-                if (!Configuration.OPERATORS.contains(sign)) {
+                String op = searchOp(EXPRESSION, i);
+                if (!Configuration.OPERATORS.contains(op)) {
                     throw new FormulaException(6);
                 } else {
-                    if (sign.length() == 2) {
+                    if (op.length() == 2) {
                         i++;
                     }
                 }
@@ -51,7 +51,7 @@ public class FormulaParser {
         }
     }
 
-    private String searchSign(String expression, int pointer) {
+    private String searchOp(String expression, int pointer) {
         if (expression.charAt(pointer) == '!' || expression.charAt(pointer) == '~')
             return expression.charAt(pointer) + "";
         return "" + expression.charAt(pointer) + expression.charAt(pointer + 1);
@@ -70,20 +70,17 @@ public class FormulaParser {
         if (EXPRESSION.charAt(0) == '(' && EXPRESSION.charAt(EXPRESSION.length() - 1) != ')') {
             throw new FormulaException(3);
         }
-        int checkOpen = 0;
-        int checkClose = 0;
+        int openBrackets = 0;
+        int closeBrackets = 0;
         for (int i = 0; i < EXPRESSION.length(); i++) {
             if (EXPRESSION.charAt(i) == '(') {
-                checkOpen++;
+                openBrackets++;
             } else if (EXPRESSION.charAt(i) == ')') {
-                checkClose++;
+                closeBrackets++;
             }
         }
-        if (checkOpen > checkClose) {
-            throw new FormulaException(1);
-        }
-        if (checkClose > checkOpen) {
-            throw new FormulaException(2);
+        if (openBrackets != closeBrackets) {
+            throw new FormulaException(11);
         }
     }
 

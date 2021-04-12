@@ -37,25 +37,25 @@ public class ExpressionNode {
             if (expression.length() == 1) {
                 throw new FormulaException(3);
             }
-            int pointerSign = OpIndexOut(expression);
-            if (pointerSign == 0) {
-                if (expression.charAt(pointerSign) != '!') {
+            int pointerOp = OpIndexOut(expression);
+            if (pointerOp == 0) {
+                if (expression.charAt(pointerOp) != '!') {
                     throw new FormulaException(3);
                 }
                 rightNode = null;
                 leftNode = new ExpressionNode(copy(expression, 1, expression.length()), root);
-                operation = searchOp(expression, pointerSign);
+                operation = searchOp(expression, pointerOp);
                 return;
             }
-            if (pointerSign == -1) {
+            if (pointerOp == -1) {
                 throw new FormulaException(3);
             }
-            operation = searchOp(expression, pointerSign);
-            String leftExpression = copy(expression, 0, pointerSign);
+            operation = searchOp(expression, pointerOp);
+            String leftExpression = copy(expression, 0, pointerOp);
             if (operation.length() == 2) {
-                pointerSign += 1;
+                pointerOp += 1;
             }
-            String rightExpression = copy(expression, pointerSign + 1, expression.length());
+            String rightExpression = copy(expression, pointerOp + 1, expression.length());
             leftNode = new ExpressionNode(leftExpression, root);
             rightNode = new ExpressionNode(rightExpression, root);
         } else {
@@ -75,8 +75,8 @@ public class ExpressionNode {
         int check = 0;
         for (int i = 0; i < expression.length(); i++) {
             if ((expression.charAt(i) != '(' && expression.charAt(i) != ')') && check == 0) {
-                String sign = searchOp(expression, i);
-                if (Configuration.OPERATORS.contains(sign)) {
+                String op = searchOp(expression, i);
+                if (Configuration.OPERATORS.contains(op)) {
                     return i;
                 }
             }

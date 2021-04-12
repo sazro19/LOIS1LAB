@@ -4,8 +4,6 @@
 
 package parser;
 
-import config.Configuration;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +16,7 @@ public class FormulaService {
     private List<String> LITERALS;
     private FormulaParser grammarParser;
     private boolean result = true;
+    private GeneratorPCNF generatorPCNF;
 
     public FormulaService(String expression) {
         try {
@@ -29,7 +28,8 @@ public class FormulaService {
             tree = grammarParser.getTree();
             LITERALS = new ArrayList<>(grammarParser.getLITERALS());
             createTruthTable();
-            formulaPCNF = generateFormula();
+            generatorPCNF = new GeneratorPCNF(table, LITERALS);
+            formulaPCNF = generatorPCNF.getPCNF();
         } catch (FormulaException exception) {
             System.out.println(exception.getMessage());
         }
@@ -37,34 +37,34 @@ public class FormulaService {
 
     public void output() {
         LITERALS.add("f");
-        table.output(LITERALS);
+        // table.output(LITERALS);
         System.out.println(formulaPCNF);
     }
 
     private void createTruthTable() throws FormulaException {
         table = new Table(LITERALS.size());
         for (int i = 0; i < table.getRows(); i++) {
-            table.setValueRow(i, determineValue(table.getRow(i), tree));
+            table.setValueRow(i, getValue(table.getRow(i), tree));
         }
     }
 
-    private boolean determineValue(int[] value, ExpressionNode tree) throws FormulaException {
+    private boolean getValue(int[] value, ExpressionNode tree) throws FormulaException {
         switch (tree.getOperation()) {
             case CON: {
-                return determineValue(value, tree.getLeftNode()) & determineValue(value, tree.getRightNode());
+                return getValue(value, tree.getLeftNode()) & getValue(value, tree.getRightNode());
             }
             case DIS: {
-                return determineValue(value, tree.getLeftNode()) | determineValue(value, tree.getRightNode());
+                return getValue(value, tree.getLeftNode()) | getValue(value, tree.getRightNode());
             }
             case NEG: {
-                return !determineValue(value, tree.getLeftNode());
+                return !getValue(value, tree.getLeftNode());
             }
             case IMPL: {
-                return !determineValue(value, tree.getLeftNode()) | determineValue(value, tree.getRightNode());
+                return !getValue(value, tree.getLeftNode()) | getValue(value, tree.getRightNode());
             }
             case EQ: {
-                return (!determineValue(value, tree.getLeftNode()) & !determineValue(value, tree.getRightNode())) |
-                        (determineValue(value, tree.getLeftNode()) & determineValue(value, tree.getRightNode()));
+                return (!getValue(value, tree.getLeftNode()) & !getValue(value, tree.getRightNode())) |
+                        (getValue(value, tree.getLeftNode()) & getValue(value, tree.getRightNode()));
             }
             case "": {
                 List<String> list = new ArrayList<>(LITERALS);
@@ -77,45 +77,6 @@ public class FormulaService {
                 throw new FormulaException(13);
             }
         }
-    }
-
-    private String generateFormula() {
-        StringBuilder builder = new StringBuilder();
-        if (table.countDis() == 0) {
-            return "0";
-        }
-        builder.append("(".repeat(Math.max(0, table.countDis() - 1)));
-        int count = 0;
-        for (int j = 0; j < table.getRows(); j++) {
-            if (table.getValueRow(j) == 0) {
-                builder.append(atom(LITERALS.size(), table.getTable()[j]));
-                if (count != 0) {
-                    builder.append(")");
-                }
-                String MAIN_SIGN = "/\\";
-                builder.append(MAIN_SIGN);
-                count++;
-            }
-        }
-        builder.setLength(builder.length() - 2);
-        return builder.toString();
-    }
-
-    private String atom(int countElements, int[] row) {
-        StringBuilder atom = new StringBuilder();
-        atom.append("(".repeat(Math.max(0, countElements - 1)));
-        int count = 0;
-        for (int i = 0; i < countElements; i++) {
-            atom.append((row[i] == 0) ? Configuration.LITERALS.get(i) : ("(!" + Configuration.LITERALS.get(i) + ")"));
-            if (count != 0) {
-                atom.append(")");
-            }
-            String SIGN = "\\/";
-            atom.append(SIGN);
-            count++;
-        }
-        atom.setLength(atom.length() - 2);
-        return atom.toString();
     }
 
     public String getResultParser() {

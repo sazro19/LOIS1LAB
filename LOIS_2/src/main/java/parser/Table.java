@@ -46,7 +46,7 @@ public class Table {
         table[i][elements] = value ? 1 : 0;
     }
 
-    public int countDis() {
+    public int count() {
         int result = 0;
         for (int i = 0; i < rows; i++) {
             if (table[i][elements] == 0) {
